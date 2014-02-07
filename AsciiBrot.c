@@ -60,6 +60,8 @@ int mandelbrot(double x, double y);
 double squareX(double x, double y);
 double squareY(double x, double y);
 double lengthSquared(double x, double y);
+double zeConvertX(double x);
+double zeConvertY(double y);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -86,7 +88,7 @@ int main(int argc, char * argv[]) {
 			}
 			x++;
 		}
-
+ 
 		printf("\n");
 		x = 0;
 		y++;
@@ -104,30 +106,35 @@ int main(int argc, char * argv[]) {
 int mandelbrot(double x, double y) 
 {
 	int result = TRUE;
+
 	double Zx = 0;
 	double Zy = 0;
+
+	double ZZx = 0;
+	double ZZy = 0;
+
 	int counter;
 	counter = 0;
+
+	double conX = zeConvertX(x);
+	double conY = zeConvertY(y);
 	
-	Zx = Zx + x;
-	Zy = Zy + y;
-	//printf("%f\n", Zx);
-	//printf("%f\n", Zy);
-
-	while (counter < 255)
+	while ((result == TRUE)&&(counter <= MAX_ITERATIONS))
 	{
-
-		if (sqrt(lengthSquared(Zx, Zy)) > 2)
+		Zx = (ZZx) + conX;
+		Zy = (ZZy) + conY;
+		
+		if (lengthSquared(Zx, Zy) > 4 )
 		{
 			result = FALSE;
 		}
 		else
 		{
 
-		Zx = squareX(x, y);
-		Zy = squareY(x, y);
+			ZZx = squareX(Zx, Zy);
+			ZZy = squareY(Zx, Zy);
 
-		counter ++;
+			counter ++;
 
 		}
 
@@ -142,11 +149,11 @@ int mandelbrot(double x, double y)
 
 double lengthSquared(double x, double y) 
 {
-
-
+	
 	double valueLengthSquared = ((x * x) + (y * y));
 
 	return valueLengthSquared;
+
 }
 
 
@@ -169,6 +176,27 @@ double squareY(double x, double y)
 	double valueSquareY = (x*y + x*y);
 
 	return valueSquareY;
+}
+
+double zeConvertX(double x)
+{
+
+	double stepOne = x / WIDTH;
+	double stepTwo = stepOne * X_RANGE;
+	double stepThree = stepTwo + MIN_X;
+
+	return stepThree;
+
+}
+
+double zeConvertY(double y)
+{
+	double stepOne = y / HEIGHT;
+	double stepTwo = stepOne * Y_RANGE;
+	double stepThree = stepTwo + MIN_Y;
+
+
+	return stepThree;
 }
 
 // EOF
