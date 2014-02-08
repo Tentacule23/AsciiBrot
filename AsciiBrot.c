@@ -56,15 +56,16 @@ then a zoom level of 30/2 would give us the same mandelbrot.
 #define Y_RANGE (MAX_Y - MIN_Y)
 
 // *** STUDENT REQUIRED TO COMPLETE THESE FUNCTIONS *** //
-int mandelbrot(double x, double y, int *zoomAndZero);
+int mandelbrot(double x, double y, double *zoomAndZero);
 double squareX(double x, double y);
 double squareY(double x, double y);
 double lengthSquared(double x, double y);
-double zeConvertX(double x, int *zoomAndZero);
-double zeConvertY(double y, int *zoomAndZero);
+double zeConvertX(double x, double *zoomAndZero);
+double zeConvertY(double y, double *zoomAndZero);
 void testUnit(void);
-int zoomLevel(int *zoomAndZero);
-void askStuff(int *zoomAndZero);
+double zoomLevelX(double *zoomAndZero);
+double zoomLevelY(double *zoomAndZero);
+void askStuff(double *zoomAndZero);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -78,7 +79,7 @@ int main(int argc, char * argv[]) {
 	// iterate through each row
 	int x = 0;
 	int y = 0;
-	int zoomAndZero[3];
+	double zoomAndZero[3];
 	
 	askStuff(zoomAndZero);
 	
@@ -112,7 +113,7 @@ int main(int argc, char * argv[]) {
 // implement mandelbrot escape-time algorithm for a given x,y coordinate
 // (whether or not a point is in the mandelbrot set or not)
 
-int mandelbrot(double x, double y, int *zoomAndZero) 
+int mandelbrot(double x, double y, double *zoomAndZero)
 {
 	int result = TRUE;
 
@@ -189,23 +190,25 @@ double squareY(double x, double y)
 
 }
 
-double zeConvertX(double x, int *zoomAndZero)
+double zeConvertX(double x, double *zoomAndZero)
 {
+	double zoomMod = zoomLevelX(zoomAndZero);
 
 	double stepOne = x / WIDTH;
-	double stepTwo = stepOne * X_RANGE;
-	double stepThree = stepTwo + (MIN_X + zoomAndZero[0]);
+	double stepTwo = stepOne * (X_RANGE * zoomMod);
+	double stepThree = stepTwo + ((MIN_X * zoomMod) + zoomAndZero[0]);
 
 	return stepThree;
 
 }
 
-double zeConvertY(double y, int *zoomAndZero)
+double zeConvertY(double y, double *zoomAndZero)
 {
+	double zoomMod = zoomLevelY(zoomAndZero);
 
 	double stepOne = y / HEIGHT;
-	double stepTwo = stepOne * (Y_RANGE*-1);
-	double stepThree = stepTwo + (MAX_Y + zoomAndZero[1]);
+	double stepTwo = stepOne * ((Y_RANGE * zoomMod)*-1);
+	double stepThree = stepTwo + ((MAX_Y * zoomMod) + zoomAndZero[1]);
 	
 	return stepThree;
 
@@ -221,27 +224,39 @@ void testUnit(void)
 	
 }
 
-int zoomLevel(int *zoomAndZero)
+double zoomLevelX(double *zoomAndZero)
 {
+	
+	double zoomLevel = zoomAndZero[2] / 100;
 
-
+	return zoomLevel;
 	
 }
 
-void askStuff(int *zoomAndZero)
+double zoomLevelY(double *zoomAndZero)
+
+{
+	double zoomLevel = zoomAndZero[2] / 100;
+
+	return zoomLevel;
+
+
+}
+
+void askStuff(double *zoomAndZero)
 {
 	
-	int newStartX = 0;
-	int newStartY = 0;
-	int zoom = 0;
+	double newStartX = 0;
+	double newStartY = 0;
+	double zoom = 0;
 		
 	printf("Enter (0, 0) value!\n");
 	printf("New Starting X coord:\n");
-	scanf("%d", &newStartX);
+	scanf("%lf", &newStartX);
 	printf("New Starting Y coord:\n");
-	scanf("%d", &newStartY);
+	scanf("%lf", &newStartY);
 	printf("Enter zoom level!\n");
-	scanf("%d", &zoom);
+	scanf("%lf", &zoom);
 
 	zoomAndZero[0] = newStartX;
 	zoomAndZero[1] = newStartY;
