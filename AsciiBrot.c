@@ -56,12 +56,15 @@ then a zoom level of 30/2 would give us the same mandelbrot.
 #define Y_RANGE (MAX_Y - MIN_Y)
 
 // *** STUDENT REQUIRED TO COMPLETE THESE FUNCTIONS *** //
-int mandelbrot(double x, double y);
+int mandelbrot(double x, double y, int *zoomAndZero);
 double squareX(double x, double y);
 double squareY(double x, double y);
 double lengthSquared(double x, double y);
-double zeConvertX(double x);
-double zeConvertY(double y);
+double zeConvertX(double x, int *zoomAndZero);
+double zeConvertY(double y, int *zoomAndZero);
+void testUnit(void);
+int zoomLevel(int *zoomAndZero);
+void askStuff(int *zoomAndZero);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -70,16 +73,22 @@ double zeConvertY(double y);
 int main(int argc, char * argv[]) {
 	printf(" UNSW Computing 1 - ASCII-BROT\n");
 
+	testUnit();
+
 	// iterate through each row
 	int x = 0;
 	int y = 0;
+	int zoomAndZero[3];
+	
+	askStuff(zoomAndZero);
+	
 
 	while (y < HEIGHT) 
 	{
 		// iterate through each column
 		while (x < WIDTH) 
 		{
-			if (mandelbrot(x, y)) 
+			if (mandelbrot(x, y, zoomAndZero)) 
 			{
 				printf("*");
 			}
@@ -103,36 +112,35 @@ int main(int argc, char * argv[]) {
 // implement mandelbrot escape-time algorithm for a given x,y coordinate
 // (whether or not a point is in the mandelbrot set or not)
 
-int mandelbrot(double x, double y) 
+int mandelbrot(double x, double y, int *zoomAndZero) 
 {
 	int result = TRUE;
 
-	double Zx = 0;
-	double Zy = 0;
+	double testCoordx = 0;
+	double testCoordy = 0;
 
-	double ZZx = 0;
-	double ZZy = 0;
+	double newCoordx = 0;
+	double newCoordy = 0;
 
-	int counter;
-	counter = 0;
+	int counter = 0;
 
-	double conX = zeConvertX(x);
-	double conY = zeConvertY(y);
+	double convertX = zeConvertX(x, zoomAndZero);
+	double convertY = zeConvertY(y, zoomAndZero);
 	
-	while ((result == TRUE)&&(counter <= MAX_ITERATIONS))
+	while ((result == TRUE)&&(counter < MAX_ITERATIONS))
 	{
-		Zx = (ZZx) + conX;
-		Zy = (ZZy) + conY;
+		testCoordx = (newCoordx)+convertX;
+		testCoordy = (newCoordy)+convertY;
 		
-		if (lengthSquared(Zx, Zy) > 4 )
+		if (lengthSquared(testCoordx, testCoordy) > 4)
 		{
 			result = FALSE;
 		}
 		else
 		{
 
-			ZZx = squareX(Zx, Zy);
-			ZZy = squareY(Zx, Zy);
+			newCoordx = squareX(testCoordx, testCoordy);
+			newCoordy = squareY(testCoordx, testCoordy);
 
 			counter ++;
 
@@ -162,6 +170,7 @@ double lengthSquared(double x, double y)
 
 double squareX(double x, double y) 
 {
+
 	double valueSquareX = ((x * x) - (y * y));
 	
 	return valueSquareX;
@@ -173,30 +182,70 @@ double squareX(double x, double y)
 
 double squareY(double x, double y)
 {
+
 	double valueSquareY = (x*y + x*y);
 
 	return valueSquareY;
+
 }
 
-double zeConvertX(double x)
+double zeConvertX(double x, int *zoomAndZero)
 {
 
 	double stepOne = x / WIDTH;
 	double stepTwo = stepOne * X_RANGE;
-	double stepThree = stepTwo + MIN_X;
+	double stepThree = stepTwo + (MIN_X + zoomAndZero[0]);
 
 	return stepThree;
 
 }
 
-double zeConvertY(double y)
+double zeConvertY(double y, int *zoomAndZero)
 {
+
 	double stepOne = y / HEIGHT;
-	double stepTwo = stepOne * Y_RANGE;
-	double stepThree = stepTwo + MIN_Y;
-
-
+	double stepTwo = stepOne * (Y_RANGE*-1);
+	double stepThree = stepTwo + (MAX_Y + zoomAndZero[1]);
+	
 	return stepThree;
+
 }
 
+void testUnit(void)
+{
+
+	//assert(zeConvertY(0) == 1);
+	//assert(zeConvertY(30) == -1);
+	//assert(zeConvertX(0) == -1.5);
+	//assert(zeConvertX(72) == 1);
+	
+}
+
+int zoomLevel(int *zoomAndZero)
+{
+
+
+	
+}
+
+void askStuff(int *zoomAndZero)
+{
+	
+	int newStartX = 0;
+	int newStartY = 0;
+	int zoom = 0;
+		
+	printf("Enter (0, 0) value!\n");
+	printf("New Starting X coord:\n");
+	scanf("%d", &newStartX);
+	printf("New Starting Y coord:\n");
+	scanf("%d", &newStartY);
+	printf("Enter zoom level!\n");
+	scanf("%d", &zoom);
+
+	zoomAndZero[0] = newStartX;
+	zoomAndZero[1] = newStartY;
+	zoomAndZero[2] = zoom;
+
+}
 // EOF
